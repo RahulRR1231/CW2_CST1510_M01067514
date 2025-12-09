@@ -34,13 +34,12 @@ def run_comprehensive_tests():
         "Low",
         "Open",
         "This is a test incident",
-        "test_user"
     )
     print(f"  Create: ✅ Incident #{test_id} created")
 
     # Read
     df = pd.read_sql_query(
-        "SELECT * FROM cyber_incidents WHERE id = ?",
+        "SELECT * FROM cyber_incidents WHERE incident_id = ?",
         conn,
         params=(test_id,)
     )

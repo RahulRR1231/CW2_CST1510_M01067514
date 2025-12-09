@@ -42,20 +42,16 @@ def create_cyber_incidents_table(conn):
        # SQL statement to create users table
     create_table_sql = """
     CREATE TABLE IF NOT EXISTS cyber_incidents (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT,
-        incident_type TEXT,
+        incident_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp TEXT,
         severity TEXT,
+        category TEXT,
         status TEXT,
-        description TEXT,
-        reported_by TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        description TEXT
     )
     """
 
    
-    
-    print("✅ Users table created successfully!")
     # TODO: Execute the SQL statement
     cursor.execute(create_table_sql)
     # TODO: Commit the changes
@@ -67,33 +63,22 @@ def create_cyber_incidents_table(conn):
 
 
 def create_datasets_metadata_table(conn):
-    """
-    Create the datasets_metadata table.
+    
+    #Create the datasets_metadata table.
 
-    TODO: Implement this function following the users table example.
+    #TODO: Implement this function following the users table example.
 
-    Required columns:
-    - id: INTEGER PRIMARY KEY AUTOINCREMENT
-    - dataset_name: TEXT NOT NULL
-    - category: TEXT (e.g., 'Threat Intelligence', 'Network Logs')
-    - source: TEXT (origin of the dataset)
-    - last_updated: TEXT (format: YYYY-MM-DD)
-    - record_count: INTEGER
-    - file_size_mb: REAL
-    - created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    """
     # TODO: Implement following the users table pattern
+    
     cursor= conn.cursor()
     create_table_sql = """
     CREATE TABLE IF NOT EXISTS datasets_metadata (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        dataset_name TEXT NOT NULL,
-        category TEXT,
-        source TEXT,
-        last_updated TEXT,
-        record_count INTEGER,
-        file_size_mb REAL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        dataset_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        rows TEXT,
+        columns TEXT,
+        uploaded_by TEXT,
+        upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """
     cursor.execute(create_table_sql)
@@ -104,6 +89,7 @@ def create_datasets_metadata_table(conn):
 
 
 def create_it_tickets_table(conn):
+
     """
     Create the it_tickets table.
 
@@ -126,17 +112,13 @@ def create_it_tickets_table(conn):
     cursor = conn.cursor()
     create_table_sql = """
     CREATE TABLE IF NOT EXISTS it_tickets (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ticket_id TEXT UNIQUE NOT NULL,
+        ticket_id INTEGER PRIMARY KEY AUTOINCREMENT,
         priority TEXT,
-        status TEXT,
-        category TEXT,
-        subject TEXT NOT NULL,
         description TEXT,
-        created_date TEXT,
-        resolved_date TEXT,
+        status TEXT,
         assigned_to TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        resolution_time_hours INTEGER
     )
     """
     cursor.execute(create_table_sql)

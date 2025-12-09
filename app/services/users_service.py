@@ -1,6 +1,6 @@
 import bcrypt
 from app.data.db import connect_database
-
+from pathlib import Path
 import sqlite3
 from CreateDatabase import DATA_DIR
 
@@ -56,7 +56,6 @@ def login_user(username, password):
 
 
 
-
 def migrate_users_from_file(conn, filepath=DATA_DIR / "users.txt"):
     """Migrate users from text file to database."""
     # ... migration logic ...
@@ -93,3 +92,8 @@ def migrate_users_from_file(conn, filepath=DATA_DIR / "users.txt"):
 
     conn.commit()
     print(f"✅ Migrated {migrated_count} users from {filepath.name}")
+
+
+
+conn = connect_database()
+cursor = conn.cursor()

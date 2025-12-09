@@ -21,45 +21,59 @@ def verify_password(plain_text_password, hashed_password):
 
 
 
-def register_user(username, password):
+def register_user(username, password, role="user"):
     if user_exists(username):
         print(f"User {username} already exists.")
         return False
     else:
-     # Register a new user
-     hashed_password = hash_password(password)
+        # Register a new user
+        hashed_password = hash_password(password)
 
-     with open(USER_DATA_FILE, "a") as f:
-        f.write(f"{username},{hashed_password}\n")
+        with open(USER_DATA_FILE, "a") as f:
+            f.write(f"{username},{hashed_password},{role}\n")
 
-     print(f"User '{username}' registered.")
-     return True
+        print(f"User '{username}' registered with role '{role}'.")
+        return True
+
 
 def user_exists(username):
-    if  not os.path.exists(USER_DATA_FILE):
-        f  = open(USER_DATA_FILE, "x")
+    if not os.path.exists(USER_DATA_FILE):
+        f = open(USER_DATA_FILE, "x")
         f.close()
+
     with open(USER_DATA_FILE, "r") as f:
         for line in f.readlines():
-            user,hash_value = line.strip().split(',', 1)
+            parts = line.strip().split(',', 2)
+            if len(parts) < 3:
+                continue  # skip old or malformed entries
+            user, hash_value, role = parts
             if username == user:
-             return True
+                return True
     return False
 
 def login_user(username, password):
-
     with open(USER_DATA_FILE, "r") as f:
         lines = f.readlines()
         if lines == "":
-            print(f"No user registered.")
+            print("No user registered.")
             return False
+
         for line in lines:
-            user, hash_value = line.strip().split(',', 1)
+            parts = line.strip().split(',', 2)
+            if len(parts) < 3:
+                continue
+            user, hash_value, role = parts
 
             if user == username:
-                return verify_password(password, hash_value)
+                if verify_password(password, hash_value):
+                    print(f"Login successful! Your role is: {role}")
+                    return True
+                else:
+                    return False
+
     print("Username not found.")
     return False
+
 
 def validate_username(username):
         # check minimum length
@@ -71,7 +85,7 @@ def validate_username(username):
             print ("Username must contain only letters and numbers.")
             return False,"Username is not valid"
 
-        print(f"username{username}is valid")
+        print(f"username {username} is valid")
         return True,"Username is valid"
 
 
@@ -126,8 +140,17 @@ def main():
                 print("Error: Passwords do not match.")
                 continue
 
+         # ROLE INPUT
+            role = input("Enter role (user/admin/analyst): ").strip().lower()
+            if role not in ["user", "admin", "analyst"]:
+                print("Error: Invalid role. Use user/admin/analyst.")
+                continue
+
+
+
+
             # Register the user
-            register_user(username, password)
+            register_user(username, password, role)
 
         elif choice == '2':
             # Login flow
