@@ -36,6 +36,10 @@ else:
         incidents = get_all_incidents(conn)
         st.dataframe(incidents, use_container_width=True)
 
+        st.bar_chart(incidents['severity'].value_counts())
+
+
+
         # CREATE: Add new incident with a form
         with st.form("new_incident"):
 
@@ -114,6 +118,9 @@ else:
         tickets = get_all_tickets(conn)
         st.dataframe(tickets, use_container_width=True)
 
+        st.bar_chart(tickets['priority'].value_counts())
+
+
         # CREATE: Add new ticket with a form
         with st.form("new_ticket"):
 
@@ -182,6 +189,11 @@ else:
         # READ: Display datasets in a beautiful table (Week 8 function + Streamlit UI)
         datasets = get_all_datasets(conn)
         st.dataframe(datasets, use_container_width=True)
+
+        st.bar_chart(datasets['uploaded_by'].value_counts())
+
+
+
 
         # CREATE: Add new dataset with a form
         with st.form("new_dataset"):
