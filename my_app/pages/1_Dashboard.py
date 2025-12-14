@@ -5,50 +5,60 @@ from app.data.incidents import *
 from app.data.tickets import *
 from app.data.datasets import*
 from time import sleep
+import datetime
 
+
+# Initialize login state if it does not exist
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
-# Redirect to login if not logged in
+# If user is not logged in, block access to dashboard
 if not st.session_state.logged_in:
     st.error("Please log in to access the dashboard.")
-    if st.button("Go to Login Page"):
+    if st.button("Go to Login Page"):  # Redirect to login if not logged in
        st.switch_page("Home.py")
        st.stop()
 else:
+    
 
-    # Connect to database (Week 8 function)
+    # Connect to database
     conn = connect_database("DATA/intelligence_platform.db")
 
 
+    # Create tabs for different dashboards
+    tab_incidents, tab_tickets, tab_datasets = st.tabs(["Cyber Incidents Dashboard", "IT Tickets Dashboard", "Datasets Dashboard"])
 
 
-
-
-    tab_incidents, tab_tickets, tab_datasets = st.tabs(["Incidents", "Tickets", "Datasets"])
+    # 1st Tab for Cyber Incidents Dashboard
     with tab_incidents:
 
         
         # Page title
         st.title("Cyber Incidents Dashboard")
 
-        # READ: Display incidents in a beautiful table (Week 8 function + Streamlit UI)
+        # Display incidents in a beautiful table 
         incidents = get_all_incidents(conn)
         st.dataframe(incidents, use_container_width=True)
 
-        st.bar_chart(incidents['severity'].value_counts())
+        
 
 
 
-        # CREATE: Add new incident with a form
+        #  Add new incident with a form
         with st.form("new_incident"):
 
-            timestamp = st.date_input("Timestamp")
-            #incident_id = st.text_input("Incident ID")
+            st.write("Timestamp:")
+            date = st.date_input("Select Date",datetime.date(2024, 1, 1))
+            time = st.time_input("Select Time",datetime.time(2, 0, 0))
+            timestamp = datetime.datetime.combine(date, time)
+            st.write(f"Full timestamp: {timestamp}")
+            
+
             severity = st.selectbox("Severity", ["Low", "Medium", "High", "Critical"])
+            category = st.text_input("Category")
             status = st.selectbox("Status", ["Open", "In Progress", "Resolved"])
             description = st.text_input("Description")
-            category = st.text_input("Catergory")
+            
 
             submitted = st.form_submit_button("Add Incident")
 
@@ -108,36 +118,41 @@ else:
         st.dataframe(get_incident_types_with_many_cases(conn, int(minimum_count)), use_container_width=True)
 
 
-
+    # 2nd Tab for IT Tickets Dashboard
     with tab_tickets:
 
         # Page title
-        st.title("It Tickets Dashboard")
+        st.title("IT Tickets Dashboard")
 
-        # READ: Display tickets in a beautiful table (Week 8 function + Streamlit UI)
+        # Display tickets in a beautiful table
         tickets = get_all_tickets(conn)
         st.dataframe(tickets, use_container_width=True)
 
-        st.bar_chart(tickets['priority'].value_counts())
+        
+        
 
-
-        # CREATE: Add new ticket with a form
+        # Add new ticket with a form
         with st.form("new_ticket"):
 
-            ticket_id = st.text_input("Ticket ID")
             priority = st.selectbox("Priority", ["Low", "Medium", "High", "Critical"])
             status = st.selectbox("Status", ["Open", "In Progress", "Resolved"])
             description = st.text_input("Description")
             assigned_to = st.text_input("Assigned To")
-            created_at = st.date_input("Created At")
+            
+            st.write("Created At:")
+            date = st.date_input("Select Date",datetime.date(2024, 1, 1))
+            time = st.time_input("Select Time",datetime.time(2, 0, 0))
+            created_at = datetime.datetime.combine(date, time)
+            st.write(f"Created At: {created_at}")
+
             resolution_time_hours = st.number_input("Resolution Time (hours)", min_value=0)
         
 
             submitted = st.form_submit_button("Add Ticket")
 
         # When form is submitted
-        if submitted and ticket_id:
-            insert_ticket(conn, ticket_id, priority, description, status, assigned_to, created_at, resolution_time_hours)
+        if submitted :
+            insert_ticket(conn, priority, description, status, assigned_to, created_at, resolution_time_hours)
             st.success("✓ Ticket added successfully!")
             sleep(5)
             st.rerun()
@@ -179,23 +194,23 @@ else:
         st.dataframe(high_priority_tickets, use_container_width=True)
 
 
-
+    # 3rd Tab for Datasets Dashboard
     with tab_datasets:
 
 
         # Page title
         st.title("Datasets Metadata Dashboard")
 
-        # READ: Display datasets in a beautiful table (Week 8 function + Streamlit UI)
+        # Display datasets in a beautiful table s
         datasets = get_all_datasets(conn)
         st.dataframe(datasets, use_container_width=True)
 
-        st.bar_chart(datasets['uploaded_by'].value_counts())
+    
 
 
 
 
-        # CREATE: Add new dataset with a form
+        # Add new dataset with a form
         with st.form("new_dataset"):
 
             name = st.text_input("Name")

@@ -2,10 +2,12 @@ import streamlit as st
 from app.services.users_service import register_user, login_user
 from app.data.users import get_user_by_username
 
+
+
 st.set_page_config(page_title="Login / Register", page_icon="🔑", layout="centered")
 
 
-# ---------- Initialise session state ----------
+# Initialise session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -21,10 +23,10 @@ if st.session_state.logged_in:
         st.switch_page("pages/1_Dashboard.py")
     st.stop()
 
-# ---------- Tabs: Login / Register ----------
+# Tabs: Login / Register
 tab_login, tab_register = st.tabs(["Login", "Register"])
 
-# ----- LOGIN TAB -----
+# LOGIN TAB 
 with tab_login:
     st.subheader("Login")
     login_username = st.text_input("Username", key="login_username")
@@ -39,7 +41,7 @@ with tab_login:
         else:
             st.error("Invalid username or password.")
 
-# ----- REGISTER TAB -----
+# REGISTER TAB 
 with tab_register:
     st.subheader("Register")
     new_username = st.text_input("Choose a username", key="register_username")
